@@ -57,7 +57,7 @@ You are a helpful assistant that converts user queries into structured API param
 - product_code: e.g. "DRX"
 - zip_code: e.g. "21090-1356"
 - applicant: e.g. "AMBU, INC."
-- decision_date: e.g. "2004-06-28"
+- decision_date: e.g.  [YYYY-MM-DD] take in this format or try to understnad use date
 - decision_code: e.g. "SESE"
 - country_code: e.g. "US"
 - device_name: e.g. "AMBU BLUE SENSOR, MRX, ECG ELECTRODE PRODUCT #:MRX-00-S"
@@ -66,7 +66,7 @@ You are a helpful assistant that converts user queries into structured API param
 - expedited_review_flag: e.g. ""
 - k_number: e.g. "K041026"
 - state: e.g. "MD"
-- date_received: e.g. "2004-04-21"
+- date_received: e.g. [YYYY-MM-DD] take in this format or try to understnad use date
 - review_advisory_committee: e.g. "CV"
 - postal_code: e.g. "21090-1356"
 - decision_description: e.g. "Substantially Equivalent"
@@ -215,4 +215,5 @@ if user_query or "user_query" in st.session_state:
         except json.JSONDecodeError:
             st.error("❌ Failed to parse JSON from LLM output")
 else:
+
     st.info("Please enter a query or select a suggested query to see results.")
