@@ -28,49 +28,48 @@ prompt = PromptTemplate(
 You are a helpful assistant that converts user queries into structured API parameters for FDA device APIs. Based on the user query, determine which API to use:
 - Classification API: https://api.fda.gov/device/classification.json
 - 510k API: https://api.fda.gov/device/510k.json
-
+only use class clasiification when user used word classfication/class ok otherwise use 510k.json url only
 ### Classification API Schema (valid fields, example values):
 - third_party_flag: "N" or "Y"
 - life_sustain_support_flag: "N" or "Y"
 - gmp_exempt_flag: "N" or "Y"
-- summary_malfunction_reporting: e.g. "Ineligible"
-- product_code: e.g. "NFK"
-- review_panel: e.g. "GU"
-- medical_specialty: e.g. "GU"
-- device_name: e.g. "Kit, Repair, Catheter, Hemodialysis"
+- summary_malfunction_reporting: e.g. "Ineligible" or "Eligible"
+- product_code: e.g. "NFK" (always make in to upercase everychar if user write lower)
+- review_panel: e.g. "GU" (always make in to upercase everychar if user write lower)
+- medical_specialty: e.g. "GU" (always make in to upercase everychar if user write lower)
+- device_name: e.g. "Kit, Repair, Catheter, Hemodialysis" (make user input first  letter Capital)
 - review_code: e.g. ""
 - unclassified_reason: e.g. ""
-- medical_specialty_description: e.g. "Gastroenterology, Urology"
+- medical_specialty_description: e.g. "Gastroenterology, Urology" (make user input first  letter Capital)
 - device_class: e.g. "2"
 - definition: e.g. "Hemodialysis Tray"
 - regulation_number: e.g. "876.5540"
 - implant_flag: "N" or "Y"
-- submission_type_id: e.g. "1"
+- submission_type_id: e.g. "1" 
 
 ### 510k API Schema (valid fields, example values):
 - third_party_flag: "N" or "Y"
-- city: e.g. "LINTHICUM"
-- advisory_committee_description: e.g. "Cardiovascular"
-- address_1: e.g. "611 NORTH HAMMONDS FERRY ROAD"
+- city: e.g. "LINTHICUM" (always make in to upercase everychar if user write lower)
+- advisory_committee_description: e.g. "Cardiovascular" (make user input first  letter Capital)
+- address_1: e.g. "611 NORTH HAMMONDS FERRY ROAD" (always make in to upercase everychar if user write lower)
 - address_2: e.g. ""
-- statement_or_summary: e.g. "Summary"
-- product_code: e.g. "DRX"
+- product_code: e.g. "DRX" (always make in to upercase everychar if user write lower)
 - zip_code: e.g. "21090-1356"
-- applicant: e.g. "AMBU, INC."
-- decision_date: e.g.  [YYYY-MM-DD] take in this format or try to understnad use date
-- decision_code: e.g. "SESE"
-- country_code: e.g. "US"
+- applicant: e.g. "AMBU, INC." (always make in to upercase everychar if user write lower)
+- decision_date:(also approved date) e.g. [YYYY-MM-DD] take in this format or try to understnad user date 
+- decision_code: e.g. "SESE" (always make in to upercase everychar if user write lower)
+- country_code: e.g. "US" (always make in to upercase everychar if user write lower)
 - device_name: e.g. "AMBU BLUE SENSOR, MRX, ECG ELECTRODE PRODUCT #:MRX-00-S"
-- advisory_committee: e.g. "CV"
-- contact: e.g. "SANJAY PARIKH"
+- advisory_committee: e.g. "CV" (always make in to upercase everychar if user write lower)
+- contact: e.g. "SANJAY PARIKH" (always make in to upercase everychar if user write lower)
 - expedited_review_flag: e.g. ""
 - k_number: e.g. "K041026"
-- state: e.g. "MD"
-- date_received: e.g. [YYYY-MM-DD] take in this format or try to understnad use date
-- review_advisory_committee: e.g. "CV"
+- state: e.g. "MD" (always make in to upercase everychar if user write lower)
+- date_received: e.g. [YYYY-MM-DD] take in this format or try to understnad user date
+- review_advisory_committee: e.g. "CV" 
 - postal_code: e.g. "21090-1356"
-- decision_description: e.g. "Substantially Equivalent"
-- clearance_type: e.g. "Traditional"
+- decision_description: e.g. "Substantially Equivalent" (make user input first  letter Capital)
+- clearance_type: e.g. "Traditional" (make user input first  letter Capital)
 
 ### Rules:
 - Determine the intent based on the query:
@@ -85,7 +84,7 @@ You are a helpful assistant that converts user queries into structured API param
 {{
   "search": "field:term[+AND+field:term...]",
   "limit": number,
-  "intent": "classification" or "510k"
+  "intent": "510k" or "classification"
 }}
 
 ### Example Queries and Outputs:
@@ -154,13 +153,16 @@ if user_query or "user_query" in st.session_state:
             parsed = json.loads(json_str)
             search = parsed.get("search", "")
             limit = parsed.get("limit", 1)
-            intent = parsed.get("intent", "classification")
+            intent = parsed.get("intent", "")
             
             # Build FDA API URL
             base_url = "https://api.fda.gov/device/"
-            endpoint = "510k.json" if intent == "510k" else "classification.json"
+            endpoint = "classification.json" if intent == "classification" else "510k.json"
             url = f"{base_url}{endpoint}?search={search}&limit={limit}"
-            
+            # Display parsed JSON output
+            st.subheader("Query Parameters url")
+            st.json(parsed)
+            st.write(url)
             # Call FDA API
             response = requests.get(url)
             if response.status_code == 200:
@@ -215,5 +217,4 @@ if user_query or "user_query" in st.session_state:
         except json.JSONDecodeError:
             st.error("❌ Failed to parse JSON from LLM output")
 else:
-
     st.info("Please enter a query or select a suggested query to see results.")
