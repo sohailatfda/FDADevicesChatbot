@@ -78,7 +78,7 @@ only use class clasiification when user used word classfication/class ok otherwi
 - Extract the field(s), term(s), and optional limit from the user query.
 - Terms are user-specified values for the fields (not limited to the examples above).
 - If multiple fields/terms are mentioned, join them with AND (e.g., field1:term1+AND+field2:term2).
-- Default limit = 1 if not specified.
+- Default limit = 100 if not specified.
 - Return JSON in the following format:
 
 {{
@@ -217,4 +217,5 @@ if user_query or "user_query" in st.session_state:
         except json.JSONDecodeError:
             st.error("❌ Failed to parse JSON from LLM output")
 else:
+
     st.info("Please enter a query or select a suggested query to see results.")
