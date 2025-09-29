@@ -12,7 +12,7 @@ from io import BytesIO
 # # Load environment variables
 # from dotenv import load_dotenv
 # load_dotenv()
-os.environ["GROQ_API_KEY"] = "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"
+os.environ["GROQ_API_KEY"] = "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"
 
 
 # Initialize the LLM
@@ -219,3 +219,4 @@ if user_query or "user_query" in st.session_state:
 else:
 
     st.info("Please enter a query or select a suggested query to see results.")
+
